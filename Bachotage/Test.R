@@ -43,8 +43,15 @@ base_jour_aut[is.na(base_jour_aut$Cited.by),"Cited.by"] <- 0
 
 write.csv(base_jour_aut,paste0(path_data,"\\base_jour_aut.csv"))
 
-##### POST-2020
 
+
+##### FIRST REGRESSIONS
+
+base_jour_aut <- read.csv(paste0(path_data,"\\base_jour_aut.csv"))
+base_journaux = read.csv(paste0(path_data,"\\scopus_base_selection_journaux.csv"), encoding = 'UTF-8')
+base_journaux$id_art <- as.integer(rownames(base_journaux))
+
+##### POST-2020
 
 A <- base_jour_aut[base_jour_aut$Year > 2019, ]
 B <- aggregate(A$insider_2020, by=list(A$id_art), FUN=mean, na.rm = TRUE)
@@ -55,25 +62,41 @@ C <- C %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
 C[is.na(C$Cited.by),"Cited.by"] <- 0
 
 
-lm1 <- lm(Cited.by ~ x + Year, data = B)
-summary(lm1)
 
-lm2 <- lm(Cited.by ~ x + I(Year-2020), data = C)
-summary(lm2)
+B1 <- lm(Cited.by ~ x + I(Year-2020), data = B)
+summary(B1)
 
-lm3 <- lm(Cited.by ~ x + I(Year-2020) + I(x*(Year-2020)), data = C)
-summary(lm3)
+B2 <- lm(Cited.by ~ x + I(as.character(Year)) , data = B)
+summary(B2)
 
-lm4 <- lm(I(log(Cited.by + 1)) ~ x + I(Year-2020) + I(x*(Year-2020)), data = subset(C, Cited.by != 0))
-summary(lm4)
+B3 <- lm(Cited.by ~ x + I(Year-2020) + I(x*(Year-2020)), data = B)
+summary(B3)
 
-lm6 <- lm(Cited.by ~ x + I(as.character(Year)) + I(x*(Year-2020)), data = C)
-summary(lm6)
+C1 <- lm(Cited.by ~ x + I(Year-2020), data = C)
+summary(C1)
+
+C2 <- lm(Cited.by ~ x + I(as.character(Year)), data = C)
+summary(C2)
+
+C3 <- lm(Cited.by ~ x + I(Year-2020) + I(x*(Year-2020)), data = C)
+summary(C3)
+
+C4 <- lm(Cited.by ~ x + I(as.character(Year)) + I(x*(Year-2020)), data = C)
+summary(C4)
+
+C5 <- lm(I(log(Cited.by + 1)) ~ x + I(Year-2020) + I(x*(Year-2020)), data = C)
+summary(C5)
+
+
+stargazer(C1, C2, C3, C4, C5, title="Regression Models",
+          dep.var.labels=c("Number of citations"),
+          align=TRUE, no.space=TRUE, out=paste0(path_tab,"\\models_2020"))
+
 
 ##### 2013-2019
 
 
-A <- base_jour_aut[base_jour_aut$Year > 2012 & base_jour_aut$Year < 2019, ]
+A <- base_jour_aut[base_jour_aut$Year > 2012 & base_jour_aut$Year < 2020, ]
 B <- aggregate(A$insider_2011, by=list(A$id_art), FUN=mean, na.rm = TRUE)
 B <- B %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
 B[is.na(B$Cited.by),"Cited.by"] <- 0
@@ -81,20 +104,76 @@ C <- aggregate(A$insider_2011, by=list(A$id_art), FUN=max, na.rm = TRUE)
 C <- C %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
 C[is.na(C$Cited.by),"Cited.by"] <- 0
 
-lm1 <- lm(Cited.by ~ x + I(Year-2013), data = B)
-summary(lm1)
-
-lm2 <- lm(Cited.by ~ x + I(Year-2013), data = C)
-summary(lm2)
-
-lm3 <- lm(Cited.by ~ x + I(Year-2013) + I(x*(Year-2013)), data = C)
-summary(lm3)
-
-lm4 <- lm(I(log(Cited.by + 1)) ~ x + I(Year-2013) + I(x*(Year-2013)), data = subset(C, Cited.by != 0))
-summary(lm4)
-
-lm6 <- lm(Cited.by ~ x + I(as.character(Year)) + I(x*(Year-2013)), data = C)
-summary(lm6)
 
 
-table(C$x)
+B1 <- lm(Cited.by ~ x + I(Year-2013), data = B)
+summary(B1)
+
+B2 <- lm(Cited.by ~ x + I(as.character(Year)) , data = B)
+summary(B2)
+
+B3 <- lm(Cited.by ~ x + I(Year-2013) + I(x*(Year-2013)), data = B)
+summary(B3)
+
+C1 <- lm(Cited.by ~ x + I(Year-2013), data = C)
+summary(C1)
+
+C2 <- lm(Cited.by ~ x + I(as.character(Year)), data = C)
+summary(C2)
+
+C3 <- lm(Cited.by ~ x + I(Year-2013) + I(x*(Year-2013)), data = C3)
+summary(C3)
+
+C4 <- lm(Cited.by ~ x + I(as.character(Year)) + I(x*(Year-2013)), data = C)
+summary(C4)
+
+C5 <- lm(I(log(Cited.by + 1)) ~ x + I(Year-2013) + I(x*(Year-2013)), data = C)
+summary(C5)
+
+
+stargazer(C1, C2, C3, C4, C5, title="Regression Models",
+          dep.var.labels=c("Number of citations"),
+          align=TRUE, no.space=TRUE, out=paste0(path_tab,"\\models_2013"))
+
+
+##### 2003-2012
+
+
+A <- base_jour_aut[base_jour_aut$Year > 2002 & base_jour_aut$Year < 2012, ]
+B <- aggregate(A$insider_2001, by=list(A$id_art), FUN=mean, na.rm = TRUE)
+B <- B %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
+B[is.na(B$Cited.by),"Cited.by"] <- 0
+C <- aggregate(A$insider_2001, by=list(A$id_art), FUN=max, na.rm = TRUE)
+C <- C %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
+C[is.na(C$Cited.by),"Cited.by"] <- 0
+
+
+
+B1 <- lm(Cited.by ~ x + I(Year-2003), data = B)
+summary(B1)
+
+B2 <- lm(Cited.by ~ x + I(as.character(Year)) , data = B)
+summary(B2)
+
+B3 <- lm(Cited.by ~ x + I(Year-2003) + I(x*(Year-2003)), data = B)
+summary(B3)
+
+C1 <- lm(Cited.by ~ x + I(Year-2003), data = C)
+summary(C1)
+
+C2 <- lm(Cited.by ~ x + I(as.character(Year)), data = C)
+summary(C2)
+
+C3 <- lm(Cited.by ~ x + I(Year-2003) + I(x*(Year-2003)), data = C3)
+summary(C3)
+
+C4 <- lm(Cited.by ~ x + I(as.character(Year)) + I(x*(Year-2003)), data = C)
+summary(C4)
+
+C5 <- lm(I(log(Cited.by + 1)) ~ x + I(Year-2003) + I(x*(Year-2003)), data = C)
+summary(C5)
+
+
+stargazer(C1, C2, C3, C4, C5, title="Regression Models",
+          dep.var.labels=c("Number of citations"),
+          align=TRUE, no.space=TRUE, out=paste0(path_tab,"\\models_2003"))
