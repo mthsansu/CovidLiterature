@@ -1,0 +1,50 @@
+DATA EXTRACTION METHODOLOGY
+
+Compte des journaux sur les périodes (dates incluses) :
+P1 - Avant 2002
+P2 - 2003-2012
+P3 - 2013-2019
+P4 - Après 2020
+
+Mots-clés : 
+“COVID-19”, “Coronavirus”, “Corona virus”, “2019-nCoV”, “SARS-CoV”, “MERS-CoV”, “Severe Acute Respiratory Syndrome”, “Middle East Respiratory Syndrome”
+MAIN_QUERY = 
+"COVID-19" OR "Coronavirus" OR "Corona virus" OR "2019-nCoV" OR "SARS-CoV" OR "MERS-CoV" OR "Severe Acute Respiratory Syndrome" OR "Middle East Respiratory Syndrome"
+MAIN_QUERY_P1 = 
+"COVID-19" OR "Coronavirus" OR "Corona virus" OR "2019-nCoV" OR "SARS-CoV" OR "MERS-CoV" OR "Severe Acute Respiratory Syndrome" OR "Middle East Respiratory Syndrome" AND ( EXCLUDE ( PUBYEAR,2003) OR EXCLUDE ( PUBYEAR,2004) OR EXCLUDE ( PUBYEAR,2005) OR EXCLUDE ( PUBYEAR,2006) OR EXCLUDE ( PUBYEAR,2007) OR EXCLUDE ( PUBYEAR,2008) OR EXCLUDE ( PUBYEAR,2009) OR EXCLUDE ( PUBYEAR,2010) OR EXCLUDE ( PUBYEAR,2011) OR EXCLUDE ( PUBYEAR,20012) OR EXCLUDE ( PUBYEAR,2013) OR EXCLUDE ( PUBYEAR,2014) OR EXCLUDE ( PUBYEAR,2015) OR EXCLUDE ( PUBYEAR,2016) OR EXCLUDE ( PUBYEAR,2017) OR EXCLUDE ( PUBYEAR,2018) OR EXCLUDE ( PUBYEAR,2019) OR EXCLUDE ( PUBYEAR,2020) OR EXCLUDE ( PUBYEAR,2021) OR EXCLUDE ( PUBYEAR,2022) OR EXCLUDE ( PUBYEAR,2023) OR EXCLUDE ( PUBYEAR,2024) )
+MAIN_QUERY_P2 = 
+"COVID-19" OR "Coronavirus" OR "Corona virus" OR "2019-nCoV" OR "SARS-CoV" OR "MERS-CoV" OR "Severe Acute Respiratory Syndrome" OR "Middle East Respiratory Syndrome" AND ( LIMIT-TO ( PUBYEAR,2003) OR LIMIT-TO ( PUBYEAR,2004) OR LIMIT-TO ( PUBYEAR,2005) OR LIMIT-TO ( PUBYEAR,2006) OR LIMIT-TO ( PUBYEAR,2007) OR LIMIT-TO ( PUBYEAR,2008) OR LIMIT-TO ( PUBYEAR,2009) OR LIMIT-TO ( PUBYEAR,2010) OR LIMIT-TO ( PUBYEAR,2011)  OR LIMIT-TO ( PUBYEAR,2011) )
+MAIN_QUERY_P3 = 
+"COVID-19" OR "Coronavirus" OR "Corona virus" OR "2019-nCoV" OR "SARS-CoV" OR "MERS-CoV" OR "Severe Acute Respiratory Syndrome" OR "Middle East Respiratory Syndrome" AND ( LIMIT-TO ( PUBYEAR,2013) OR LIMIT-TO ( PUBYEAR,2014) OR LIMIT-TO ( PUBYEAR,2015) OR LIMIT-TO ( PUBYEAR,2016) OR LIMIT-TO ( PUBYEAR,2017) OR LIMIT-TO ( PUBYEAR,2018) OR LIMIT-TO ( PUBYEAR,2019) )
+MAIN_QUERY_P4 = 
+"COVID-19" OR "Coronavirus" OR "Corona virus" OR "2019-nCoV" OR "SARS-CoV" OR "MERS-CoV" OR "Severe Acute Respiratory Syndrome" OR "Middle East Respiratory Syndrome" AND ( LIMIT-TO ( PUBYEAR,2020) OR LIMIT-TO ( PUBYEAR,2021) OR LIMIT-TO ( PUBYEAR,2022) )
+
+Liste des 10 premiers journaux repérés par période
+P1 : 
+Journal Of Virology, Advances In Experimental Medicine And Biology, Virology, Journal Of General Virology, Archives Of Virology, Plos One, Avian Diseases, American Journal Of Veterinary Research, Veterinary Microbiology, Virus Research, Veterinary Record, Journal Of Immunology, Veterinary Immunology And Immunopathology, Journal Of Virological Methods, Journal Of Biological Chemistry
+MAIN_QUERY_P1_JLIMITED = 
+"COVID-19" OR "Coronavirus" OR "Corona virus" OR "2019-nCoV" OR "SARS-CoV" OR "MERS-CoV" OR "Severe Acute Respiratory Syndrome" OR "Middle East Respiratory Syndrome" AND ( EXCLUDE ( PUBYEAR,2003) OR EXCLUDE ( PUBYEAR,2004) OR EXCLUDE ( PUBYEAR,2005) OR EXCLUDE ( PUBYEAR,2006) OR EXCLUDE ( PUBYEAR,2007) OR EXCLUDE ( PUBYEAR,2008) OR EXCLUDE ( PUBYEAR,2009) OR EXCLUDE ( PUBYEAR,2010) OR EXCLUDE ( PUBYEAR,2011) OR EXCLUDE ( PUBYEAR,20012) OR EXCLUDE ( PUBYEAR,2013) OR EXCLUDE ( PUBYEAR,2014) OR EXCLUDE ( PUBYEAR,2015) OR EXCLUDE ( PUBYEAR,2016) OR EXCLUDE ( PUBYEAR,2017) OR EXCLUDE ( PUBYEAR,2018) OR EXCLUDE ( PUBYEAR,2019) OR EXCLUDE ( PUBYEAR,2020) OR EXCLUDE ( PUBYEAR,2021) OR EXCLUDE ( PUBYEAR,2022) OR EXCLUDE ( PUBYEAR,2023) OR EXCLUDE ( PUBYEAR,2024) ) AND ( LIMIT-TO ( EXACTSRCTITLE,"Journal Of Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Advances In Experimental Medicine And Biology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of General Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Archives Of Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Plos One" ) OR LIMIT-TO ( EXACTSRCTITLE,"Avian Diseases" ) OR LIMIT-TO ( EXACTSRCTITLE,"American Journal Of Veterinary Research" ) OR LIMIT-TO ( EXACTSRCTITLE,"Veterinary Microbiology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Virus Research" ) OR LIMIT-TO ( EXACTSRCTITLE,"Veterinary Record" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Immunology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Veterinary Immunology And Immunopathology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Virological Methods" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Biological Chemistry" ) )
+P2 :
+Journal Of Virology, Virology, Emerging Infectious Diseases, Plos One, Vaccine, Journal Of Virological Method, Journal Of Clinical Microbiology, Journal Of General Virology, Journal Of Biological Chemistry, Virus Research, Lancet, Proceedings Of The National Academy Of Sciences Of The United States Of America, Biochemical And Biophysical Research Communications, Journal Of Infectious Diseases, Journal Of Immunology
+MAIN_QUERY_P2_JLIMITED = 
+"COVID-19" OR "Coronavirus" OR "Corona virus" OR "2019-nCoV" OR "SARS-CoV" OR "MERS-CoV" OR "Severe Acute Respiratory Syndrome" OR "Middle East Respiratory Syndrome" AND ( LIMIT-TO ( PUBYEAR,2003) OR LIMIT-TO ( PUBYEAR,2004) OR LIMIT-TO ( PUBYEAR,2005) OR LIMIT-TO ( PUBYEAR,2006) OR LIMIT-TO ( PUBYEAR,2007) OR LIMIT-TO ( PUBYEAR,2008) OR LIMIT-TO ( PUBYEAR,2009) OR LIMIT-TO ( PUBYEAR,2010) OR LIMIT-TO ( PUBYEAR,2011) ) AND ( LIMIT-TO ( EXACTSRCTITLE,"Journal Of Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Emerging Infectious Diseases" ) OR LIMIT-TO ( EXACTSRCTITLE,"Plos One" ) OR LIMIT-TO ( EXACTSRCTITLE,"Vaccine" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Virological Methods" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Clinical Microbiology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of General Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Biological Chemistry" ) OR LIMIT-TO ( EXACTSRCTITLE,"Virus Research" ) OR LIMIT-TO ( EXACTSRCTITLE,"Lancet" ) OR LIMIT-TO ( EXACTSRCTITLE,"Proceedings Of The National Academy Of Sciences Of The United States Of America" ) OR LIMIT-TO ( EXACTSRCTITLE,"Biochemical And Biophysical Research Communications" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Infectious Diseases" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Immunology" ) )
+P3 :
+Plos One, Journal Of Virology, Scientific Reports, Viruses, Virology, Virus Research, Archives Of Virology, Emerging Infectious Diseases, Journal Of General Virology, Plos Pathogens, Veterinary Microbiology, Antiviral Research, Vaccine, Journal Of Virological Methods, Virology Journal
+MAIN_QUERY_P3_JLIMITED = 
+"COVID-19" OR "Coronavirus" OR "Corona virus" OR "2019-nCoV" OR "SARS-CoV" OR "MERS-CoV" OR "Severe Acute Respiratory Syndrome" OR "Middle East Respiratory Syndrome" AND ( LIMIT-TO ( PUBYEAR,2013) OR LIMIT-TO ( PUBYEAR,2014) OR LIMIT-TO ( PUBYEAR,2015) OR LIMIT-TO ( PUBYEAR,2016) OR LIMIT-TO ( PUBYEAR,2017) OR LIMIT-TO ( PUBYEAR,2018) OR LIMIT-TO ( PUBYEAR,2019) ) AND ( LIMIT-TO ( EXACTSRCTITLE,"Plos One" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Scientific Reports" ) OR LIMIT-TO ( EXACTSRCTITLE,"Viruses" ) OR LIMIT-TO ( EXACTSRCTITLE,"Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Virus Research" ) OR LIMIT-TO ( EXACTSRCTITLE,"Archives Of Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Emerging Infectious Diseases" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of General Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Plos Pathogens" ) OR LIMIT-TO ( EXACTSRCTITLE,"Veterinary Microbiology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Antiviral Research" ) OR LIMIT-TO ( EXACTSRCTITLE,"Vaccine" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Virological Methods" ) OR LIMIT-TO ( EXACTSRCTITLE,"Virology Journal" ) )
+P4 :
+Plos One, Journal Of Virology, Scientific Reports, Viruses, Virology, Virus Research, Archives Of Virology, Emerging Infectious Diseases, Journal Of General Virology, Plos Pathogens, Veterinary Microbiology, Antiviral Research, Vaccine, Journal Of Virological Methods, Virology Journal
+MAIN_QUERY_P4_JLIMITED = 
+"COVID-19" OR "Coronavirus" OR "Corona virus" OR "2019-nCoV" OR "SARS-CoV" OR "MERS-CoV" OR "Severe Acute Respiratory Syndrome" OR "Middle East Respiratory Syndrome" AND ( LIMIT-TO ( PUBYEAR,2013) OR LIMIT-TO ( PUBYEAR,2014) OR LIMIT-TO ( PUBYEAR,2015) OR LIMIT-TO ( PUBYEAR,2016) OR LIMIT-TO ( PUBYEAR,2017) OR LIMIT-TO ( PUBYEAR,2018) OR LIMIT-TO ( PUBYEAR,2019) ) AND ( LIMIT-TO ( EXACTSRCTITLE,"Plos One" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Scientific Reports" ) OR LIMIT-TO ( EXACTSRCTITLE,"Viruses" ) OR LIMIT-TO ( EXACTSRCTITLE,"Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Virus Research" ) OR LIMIT-TO ( EXACTSRCTITLE,"Archives Of Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Emerging Infectious Diseases" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of General Virology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Plos Pathogens" ) OR LIMIT-TO ( EXACTSRCTITLE,"Veterinary Microbiology" ) OR LIMIT-TO ( EXACTSRCTITLE,"Antiviral Research" ) OR LIMIT-TO ( EXACTSRCTITLE,"Vaccine" ) OR LIMIT-TO ( EXACTSRCTITLE,"Journal Of Virological Methods" ) OR LIMIT-TO ( EXACTSRCTITLE,"Virology Journal" ) )
+
+
+
+
+
+
+
+
+
+
+
+
