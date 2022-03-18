@@ -88,136 +88,172 @@ base_jour_aut[is.na(base_jour_aut$Cited.by),"Cited.by"] <- 0
 write.csv(base_jour_aut,paste0(path_data,"\\base_jour_aut.csv"))
 
 
+######## MAXIME - APPEND POST REU - REGRESSIONS
 
-##### FIRST REGRESSIONS
+library(dplyr)
+library(stargazer)
+
+path_data = 'C:\\Users\\Dell\\Desktop\\Projet DSSS\\Bachotage'
+
+# Data building
 
 base_jour_aut <- read.csv(paste0(path_data,"\\base_jour_aut.csv"))
-base_journaux = read.csv(paste0(path_data,"\\scopus_base_selection_journaux.csv"), encoding = 'UTF-8')
+base_journaux <- read.csv(paste0(path_data,"\\scopus_base_selection_journaux.csv"), encoding = 'UTF-8')
 base_journaux$id_art <- as.integer(rownames(base_journaux))
 
-##### POST-2020
+base_journaux$Nb_autors = NA
+for (id in base_journaux$id_art) {
+  base_journaux[base_journaux$id_art == id,]$Nb_autors = length(strsplit(base_journaux[base_journaux$id_art == id,]$Author.s..ID, ';')[[1]])
+}
+
 
 A <- base_jour_aut[base_jour_aut$Year > 2019, ]
-B <- aggregate(A$insider_2020, by=list(A$id_art), FUN=mean, na.rm = TRUE)
-B <- B %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
-B[is.na(B$Cited.by),"Cited.by"] <- 0
 C <- aggregate(A$insider_2020, by=list(A$id_art), FUN=max, na.rm = TRUE)
 C <- C %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
 C[is.na(C$Cited.by),"Cited.by"] <- 0
-
-
-
-B1 <- lm(Cited.by ~ x + I(Year-2020), data = B)
-summary(B1)
-
-B2 <- lm(Cited.by ~ x + I(as.character(Year)) , data = B)
-summary(B2)
-
-B3 <- lm(Cited.by ~ x + I(Year-2020) + I(x*(Year-2020)), data = B)
-summary(B3)
-
-C1 <- lm(Cited.by ~ x + I(Year-2020), data = C)
-summary(C1)
-
-C2 <- lm(Cited.by ~ x + I(as.character(Year)), data = C)
-summary(C2)
-
-C3 <- lm(Cited.by ~ x + I(Year-2020) + I(x*(Year-2020)), data = C)
-summary(C3)
-
-C4 <- lm(Cited.by ~ x + I(as.character(Year)) + I(x*(Year-2020)), data = C)
-summary(C4)
-
-C5 <- lm(I(log(Cited.by + 1)) ~ x + I(Year-2020) + I(x*(Year-2020)), data = C)
-summary(C5)
-
-
-stargazer(C1, C2, C3, C4, C5, title="Regression Models",
-          dep.var.labels=c("Number of citations"),
-          align=TRUE, no.space=TRUE, out=paste0(path_tab,"\\models_2020"))
-
-
-##### 2013-2019
-
+data_P4 <- C
 
 A <- base_jour_aut[base_jour_aut$Year > 2012 & base_jour_aut$Year < 2020, ]
-B <- aggregate(A$insider_2011, by=list(A$id_art), FUN=mean, na.rm = TRUE)
-B <- B %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
-B[is.na(B$Cited.by),"Cited.by"] <- 0
-C <- aggregate(A$insider_2011, by=list(A$id_art), FUN=max, na.rm = TRUE)
+C <- aggregate(A$insider_2013, by=list(A$id_art), FUN=max, na.rm = TRUE)
 C <- C %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
 C[is.na(C$Cited.by),"Cited.by"] <- 0
+data_P3 <- C
 
-
-
-B1 <- lm(Cited.by ~ x + I(Year-2013), data = B)
-summary(B1)
-
-B2 <- lm(Cited.by ~ x + I(as.character(Year)) , data = B)
-summary(B2)
-
-B3 <- lm(Cited.by ~ x + I(Year-2013) + I(x*(Year-2013)), data = B)
-summary(B3)
-
-C1 <- lm(Cited.by ~ x + I(Year-2013), data = C)
-summary(C1)
-
-C2 <- lm(Cited.by ~ x + I(as.character(Year)), data = C)
-summary(C2)
-
-C3 <- lm(Cited.by ~ x + I(Year-2013) + I(x*(Year-2013)), data = C3)
-summary(C3)
-
-C4 <- lm(Cited.by ~ x + I(as.character(Year)) + I(x*(Year-2013)), data = C)
-summary(C4)
-
-C5 <- lm(I(log(Cited.by + 1)) ~ x + I(Year-2013) + I(x*(Year-2013)), data = C)
-summary(C5)
-
-
-stargazer(C1, C2, C3, C4, C5, title="Regression Models",
-          dep.var.labels=c("Number of citations"),
-          align=TRUE, no.space=TRUE, out=paste0(path_tab,"\\models_2013"))
-
-
-##### 2003-2012
-
-
-A <- base_jour_aut[base_jour_aut$Year > 2002 & base_jour_aut$Year < 2012, ]
-B <- aggregate(A$insider_2001, by=list(A$id_art), FUN=mean, na.rm = TRUE)
-B <- B %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
-B[is.na(B$Cited.by),"Cited.by"] <- 0
-C <- aggregate(A$insider_2001, by=list(A$id_art), FUN=max, na.rm = TRUE)
+A <- base_jour_aut[base_jour_aut$Year > 2002 & base_jour_aut$Year < 2013, ]
+C <- aggregate(A$insider_2003, by=list(A$id_art), FUN=max, na.rm = TRUE)
 C <- C %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
 C[is.na(C$Cited.by),"Cited.by"] <- 0
+data_P2 <- C
 
+A <- base_jour_aut[base_jour_aut$Year > 1995 & base_jour_aut$Year < 2003, ]
+C <- aggregate(A$insider_1996, by=list(A$id_art), FUN=max, na.rm = TRUE)
+C <- C %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
+C[is.na(C$Cited.by),"Cited.by"] <- 0
+data_1996_2002 <- C
 
+A <- base_jour_aut[base_jour_aut$Year > 2007 & base_jour_aut$Year < 2013, ]
+C <- aggregate(A$insider_2008, by=list(A$id_art), FUN=max, na.rm = TRUE)
+C <- C %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
+C[is.na(C$Cited.by),"Cited.by"] <- 0
+data_2008_2012 <- C
 
-B1 <- lm(Cited.by ~ x + I(Year-2003), data = B)
-summary(B1)
+A <- base_jour_aut[base_jour_aut$Year > 2015 & base_jour_aut$Year < 2020, ]
+C <- aggregate(A$insider_2016, by=list(A$id_art), FUN=max, na.rm = TRUE)
+C <- C %>% left_join(base_journaux, by =c("Group.1" = "id_art"))
+C[is.na(C$Cited.by),"Cited.by"] <- 0
+data_2016_2019 <- C
 
-B2 <- lm(Cited.by ~ x + I(as.character(Year)) , data = B)
-summary(B2)
+data_P4$Year = data_P4$Year-2020
+reg_P4 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P4)
+summary(reg_P4)
+reg_P4_log <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P4)
+summary(reg_P4_log)
+reg_P4_x0 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P4[data_P4$Cited.by != 0,])
+summary(reg_P4_x0)
+reg_P4_log_x0 <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P4[data_P4$Cited.by != 0,])
+summary(reg_P4_log_x0)
 
-B3 <- lm(Cited.by ~ x + I(Year-2003) + I(x*(Year-2003)), data = B)
-summary(B3)
+data_P3$Year = data_P3$Year-2013
+reg_P3 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P3)
+summary(reg_P3)
+reg_P3_log <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P3)
+summary(reg_P3_log)
+reg_P3_x0 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P3[data_P3$Cited.by != 0,])
+summary(reg_P3_x0)
+reg_P3_log_x0 <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P3[data_P3$Cited.by != 0,])
+summary(reg_P3_log_x0)
 
-C1 <- lm(Cited.by ~ x + I(Year-2003), data = C)
-summary(C1)
+data_P2$Year = data_P2$Year-2003
+reg_P2 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P3)
+summary(reg_P2)
+reg_P2_log <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P3)
+summary(reg_P2_log)
+reg_P2_x0 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P2[data_P2$Cited.by != 0,])
+summary(reg_P2_x0)
+reg_P2_log_x0 <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_P2[data_P2$Cited.by != 0,])
+summary(reg_P2_log_x0)
 
-C2 <- lm(Cited.by ~ x + I(as.character(Year)), data = C)
-summary(C2)
+data_2016_2019$Year = data_2016_2019$Year-2016
+reg_2016 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_2016_2019)
+summary(reg_2016)
+reg_2016_log <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_2016_2019)
+summary(reg_2016_log)
+reg_2016_x0 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_2016_2019[data_2016_2019$Cited.by != 0,])
+summary(reg_2016_x0)
+reg_2016_log_x0 <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_2016_2019[data_2016_2019$Cited.by != 0,])
+summary(reg_2016_log_x0)
 
-C3 <- lm(Cited.by ~ x + I(Year-2003) + I(x*(Year-2003)), data = C3)
-summary(C3)
+data_2008_2012$Year = data_2008_2012$Year-2008
+reg_2008 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_2008_2012)
+summary(reg_2008)
+reg_2008_log <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_2008_2012)
+summary(reg_2008_log)
+reg_2008_x0 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_2008_2012[data_2008_2012$Cited.by != 0,])
+summary(reg_2008_x0)
+reg_2008_log_x0 <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_2008_2012[data_2008_2012$Cited.by != 0,])
+summary(reg_2008_log_x0)
 
-C4 <- lm(Cited.by ~ x + I(as.character(Year)) + I(x*(Year-2003)), data = C)
-summary(C4)
+data_1996_2002$Year = data_1996_2002$Year-1996
+reg_1996 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_1996_2002)
+summary(reg_1996)
+reg_1996_log <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_1996_2002)
+summary(reg_1996_log)
+reg_1996_x0 <- lm(Cited.by ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_1996_2002[data_1996_2002$Cited.by != 0,])
+summary(reg_1996_x0)
+reg_1996_log_x0 <- lm(log(Cited.by + 1) ~ x + Year + I(x*Year) + Nb_autors + Document.Type, data = data_1996_2002[data_1996_2002$Cited.by != 0,])
+summary(reg_1996_log_x0)
 
-C5 <- lm(I(log(Cited.by + 1)) ~ x + I(Year-2003) + I(x*(Year-2003)), data = C)
-summary(C5)
-
-
-stargazer(C1, C2, C3, C4, C5, title="Regression Models",
+stargazer(reg_P4, reg_P3, reg_P2, reg_2016, reg_2008, reg_1996, 
+          title="Regression Models",
           dep.var.labels=c("Number of citations"),
-          align=TRUE, no.space=TRUE, out=paste0(path_tab,"\\models_2003"))
+          align=TRUE, 
+          no.space=TRUE, 
+          omit.stat = c("f", "ser"),
+          column.sep.width = "-15pt",
+          out=paste0(path_data,"\\models"))
+
+
+stargazer(reg_P4_log, reg_P3_log, reg_P2_log, reg_2016_log, reg_2008_log, reg_1996_log, 
+          title="Regression Models",
+          dep.var.labels=c("Number of citations log+1"),
+          align=TRUE, 
+          no.space=TRUE, 
+          omit.stat = c("f", "ser"),
+          column.sep.width = "-15pt",
+          out=paste0(path_data,"\\models_log"))
+
+stargazer(reg_P4_x0, reg_P3_x0, reg_P2_x0, reg_2016_x0, reg_2008_x0, reg_1996_x0, 
+          title="Regression Models",
+          dep.var.labels=c("Number of citations without 0s"),
+          align=TRUE, 
+          no.space=TRUE, 
+          omit.stat = c("f", "ser"),
+          column.sep.width = "-15pt",
+          out=paste0(path_data,"\\models_x0"))
+
+
+stargazer(reg_P4_log_x0, reg_P3_log_x0, reg_P2_log_x0, reg_2016_log_x0, reg_2008_log_x0, reg_1996_log_x0, 
+          title="Regression Models",
+          dep.var.labels=c("Number of citations log+1 without 0s"),
+          align=TRUE, 
+          no.space=TRUE, 
+          omit.stat = c("f", "ser"),
+          column.sep.width = "-15pt",
+          out=paste0(path_data,"\\models_log_x0"))
+
+
+plot(reg_P4_log_x0$residuals, log(data_P4$Cited.by[data_P4$Cited.by != 0] +1))
+plot(reg_P4_log$residuals, log(data_P4$Cited.by +1))
+
+mean(reg_P4_log$residuals[data_P4$Cited.by == 0])
+mean(reg_P4_log$residuals[data_P4$Cited.by == 1])
+mean(reg_P4_log_x0$residuals[data_P4$Cited.by[data_P4$Cited.by!=0] == 1])
+
+
+qqnorm(reg_P4_log_x0$residuals, pch = 1, frame = FALSE)
+qqline(reg_P4_log_x0$residuals, col = "steelblue", lwd = 2)
+
+qqnorm(reg_P4_log$residuals, pch = 1, frame = FALSE)
+qqline(reg_P4_log$residuals, col = "steelblue", lwd = 2)
+
+
