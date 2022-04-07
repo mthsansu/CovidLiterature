@@ -14,7 +14,7 @@ articles_corona = articles_corona[articles_corona$Source == 'Scopus',]
 articles_corona$Source.title = tolower(articles_corona$Source.title)
 articles_corona$Source.title[articles_corona$Source.title == 'plos pathogens'] = 'plos one'
 articles_corona$Source.title[articles_corona$Source.title %in% c('the bmj', 'bmj open')] = 'bmj'
-articles_corona$Source.title[articles_corona$Source.title == 'the lancer'] = 'lancet'
+articles_corona$Source.title[articles_corona$Source.title == 'the lancet'] = 'lancet'
 articles_corona$Source.title[articles_corona$Source.title == 'the journal of general virology'] = 'journal of general virology'
 articles_corona$Source.title[articles_corona$Source.title == 'the journal of infectious diseases'] = 'journal of infectious diseases'
 articles_corona$Source.title[articles_corona$Source.title == 'the veterinary record'] = 'veterinary record'
@@ -60,7 +60,7 @@ place_to_add = (length(colnames(df_auteurs))+1):(length(colnames(df_auteurs)) + 
 df_auteurs[,place_to_add] = NA
 colnames(df_auteurs)[place_to_add] = new_cols
 
-# done = c()
+done = c()
 i = 0
 for (i in c(1:length(df_auteurs$Id_auteur))) {
   i = i+1
