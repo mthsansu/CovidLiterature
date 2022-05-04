@@ -4,54 +4,34 @@
 ###             CHABRIEL / SANSU - 29/12/2021           ###
 ###########################################################
 
+library(plyr)
 
-# Fusion des données singulières
-# A ne lancer qu'une fois
-setwd(paste0(path_data_scraping, "\\Data coronavirus"))
-deleted_rows = 0
-for (data in list.files()){
-  print(data)
-  temporary <-read.csv(data, header=TRUE)
-  BOOL = is.null(temporary)
-  if (!exists("dataset")){
-    dataset <- temporary
-  }
-  if (exists("dataset")){
-    dataset[setdiff(names(temporary), names(dataset))] <- NA
-    temporary[setdiff(names(dataset), names(temporary))] <- NA
-    dataset <- rbind(dataset, temporary)
-  }
-}
+# Lire les csv téléchargés / supprimer les doublons
 
-setwd(path_data)
-write.csv(dataset, "full_data_coronavirus.csv")
-
-# Dénombrement des auteurs
-
-setwd(path_data)
-dataset = read.csv("full_data_coronavirus.csv")
-
-dataset = dataset[dataset$Source == 'Scopus',]
-auteurs = c()
+setwd(paste0(path_data_scraping, '\\Data auteurs'))
 i = 0
-for (ligne in dataset$Author.s..ID) {
+deleted_lines = 0
+rm('df_full_articles')
+for (file in list.files()) {
   i = i+1
   print(i)
-  ligne = strsplit(ligne, ';')[[1]]
-  ligne = trimws(ligne)
-  auteurs = append(auteurs, ligne)
+  temporary = read.csv(file)
+  # Garder Scopus permet de restreindre les articles parcourus ainsi que de supprimer les lignes fautives
+  print(length(rownames(temporary)))
+  deleted_lines = deleted_lines + length(rownames(temporary))
+  temporary = temporary[temporary$Source == 'Scopus',]
+  deleted_lines = deleted_lines - length(rownames(temporary))
+  if (!exists("df_full_articles")){
+    df_full_articles <- temporary
+  }
+  if (exists("df_full_articles")){
+    df_full_articles <- rbind.fill(df_full_articles, temporary)
+    df_full_articles = df_full_articles[!duplicated(df_full_articles$EID), ]
+  }
 }
-count_authors = as.data.frame(table(auteurs))
-count_authors$auteurs = as.numeric(as.character(count_authors$auteurs))
-count_authors = count_authors[!is.na(count_authors$auteurs),]
-count_authors = count_authors[nchar(count_authors$auteurs) > 9,]
-distribution_freq = as.data.frame(table(count_authors$Freq))
 
-# Création du squelette future dataframe auteurs
-
-df_auteurs = count_authors
 setwd(path_data)
-write.csv(df_auteurs, "df_auteurs.csv")
+write.csv(df_full_articles, "df_full_articles.csv")
 
 
 

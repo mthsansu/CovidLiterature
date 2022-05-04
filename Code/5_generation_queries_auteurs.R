@@ -44,29 +44,57 @@ df_requetes$problematic = 0
 setwd(path_queries)
 write.csv(df_requetes, "base_requetes_auteurs.csv")
 
+
 # On refait avec les problméatiques
-
-setwd('C:\\Users\\Dell\\Desktop\\Projet DSSS\\Bases')
-prob = readChar('clés_manquantes.txt', file.info('clés_manquantes.txt')$size)
-prob = regmatches(prob, gregexpr("[[:digit:]]+", prob))
-prob = as.numeric(unlist(numbers))
-prob = unique(prob)
-
-prob
-
-
-# Lire les csv téléchargés / supprimer les doublons
-
-setwd('C:\\Users\\Dell\\Desktop\\Projet DSSS\\Bases\\Data propre')
-article_done = c()
-i = 0
-for (file in list.files()) {
-  i = i+1
-  print(i)
-  read_file = read.csv(file, header = TRUE)
-  BOOL = read_file$EID %in% article_done
-  read_file = read_file[!BOOL,]
-  article_done = c(article_done, read_file$EID)
-  rm(read_file)
+# A ne lancer qu'une fois
+setwd(path_queries)
+rm('df_query')
+for (file_name in c('query_tracker_Maxime1', 'query_tracker_Maxime2', 'query_tracker_Mathis1', 
+                    'query_tracker_Mathis2', 'query_tracker_Mathis3')) {
+  temporary = read.csv(file_name)
+  temporary = temporary[,c('req_tot', 'repartition_requetes', 'done', 'problematic')]
+  if (!exists("df_query")){
+    df_query <- temporary
+  }
+  if (exists("df_query")){
+    df_query <- rbind(df_query, temporary)
+  }
 }
+df_query = df_query[,c('req_tot', 'repartition_requetes', 'done', 'problematic')]
+df_query = df_query[(df_query$problematic == 1),]
+df_query = df_query[!duplicated(df_query), ]
+
+# On reconstruit des requetes plus petites
+
+library(stringr)
+query_list = c()
+for (query in df_query$req_tot) {
+  query_list = c(query_list, as.numeric(str_extract_all(query, "[0-9]+")[[1]]))
+}
+
+auteurs = unique(query_list)
+requete_liste = c()
+n_auteurs = 0
+requete = 'AU-ID('
+auteurs_parcourus = 0
+for (auteur in auteurs) {
+  print(n_auteurs)
+  n_auteurs = n_auteurs+1
+  if (auteurs_parcourus < 5) {
+    auteurs_parcourus = auteurs_parcourus+1
+    requete = paste(requete, auteur, ') OR AU-ID(', sep = '')
+  } else {
+    auteurs_parcourus = 0
+    requete = paste(requete, ')')
+    requete = gsub(' OR AU-ID\\( \\)', '', requete)
+    requete_liste = append(requete_liste, requete)
+    requete = 'AU-ID('
+  }
+}
+
+df_requetes = as.data.frame(requete_liste)
+
+setwd(path_queries)
+write.csv(df_requetes, "base_requetes_auteurs_problematics.csv")
+
 
