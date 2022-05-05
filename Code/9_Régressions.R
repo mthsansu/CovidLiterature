@@ -35,17 +35,43 @@ for (col in to_fill_with_0s) {
 
 colnames(data_auteurs)[c(5:41, 62:98, 140:176, 196:232)] = paste0(colnames(data_auteurs)[c(5:41, 62:98, 140:176, 196:232)], '_journal')
 
+# Aggréger années
 pca_data = data_auteurs[c(3, 5:41)]
+pca_data[is.na(pca_data)] = 0
+pca_data = pca_data %>% group_by(annee) %>% summarize_all(mean)
+pca_data = pca_data[,-1]
+
+# Aggréger auteurs
+pca_data = data_auteurs[c(2, 5:41)]
+pca_data[is.na(pca_data)] = 0
+pca_data = pca_data %>% group_by(author_id) %>% summarize_all(mean)
+pca_data = pca_data[,-1]
+
+# Aggréger nb_articles_cumules
+pca_data = data_auteurs[c(118, 5:41)]
+pca_data[is.na(pca_data)] = 0
+pca_data = pca_data %>% mutate(cuts = cut(nb_articles_cumule_coronavirus, c(-Inf, 1, 2, 3, 5, 10, 20, Inf))) %>% group_by(cuts) %>% summarize_all(mean)
+pca_data = pca_data[,-1]
+
+# Aggréger nb_articles_cumules, annee
+pca_data = data_auteurs[c(3, 118, 5:41)]
+pca_data[is.na(pca_data)] = 0
+pca_data = pca_data %>% 
+  mutate(cuts = cut(nb_articles_cumule_coronavirus, c(-Inf, 1, 2, 3, 5, 10, 20, Inf))) %>% 
+  group_by(cuts, annee) %>% 
+  summarize_all(mean)
+pca_data = pca_data[,-1]
+
 pca_data = scale(pca_data)
-pca <- PCA(pca_data, scale.unit=TRUE, graph=FALSE)
+pca <- PCA(pca_data, scale.unit=FALSE, graph=FALSE)
 barplot(pca$eig[,3], names.arg = 1:nrow(pca$eig), 
         main = "Variances",
         xlab = "Principal Components",
         ylab = "Percentage of variances",
         col ="steelblue")
 fviz_pca_var(pca, col.var="contrib",
-             axes = c(3,4),
-             select.var = list(name = colnames(pca_data)[!grepl('Flag', colnames(pca_data))]))
+             axes = c(1,2),
+             select.var = list(name = colnames(pca_data)))
 acp_coords = pca$ind$coord
 pca_data = cbind(pca_data, acp_coords)
 
@@ -143,14 +169,128 @@ coeff_time_visualiser <- function(dep, endo, exo, ctrl, vtlog) {
   }
   reg_coeffs = reg_coeffs[-1,]
   
-  plot = ggplot(reg_coeffs, aes(x = annee)) + 
-            geom_line(aes(y = coeff_capital_endogene), col='blue') + 
-            geom_ribbon(aes(ymin = coeff_capital_endogene_min90, ymax = coeff_capital_endogene_max90), alpha = 0.1) +
-            geom_line(aes(y = coeff_capital_exogene), col='red') + 
-            geom_ribbon(aes(ymin = coeff_capital_exogene_min90, ymax = coeff_capital_exogene_max90), alpha = 0.1) +
-            labs(title="nb_contributions",
-                 x ="Année", y = "Coefficient régression")
+  plot1 <- ggplot(reg_coeffs, aes(x = annee)) + 
+      geom_line(aes(y = coeff_capital_endogene), col='blue') + 
+      geom_ribbon(aes(ymin = coeff_capital_endogene_min90, ymax = coeff_capital_endogene_max90), alpha = 0.1) +
+      geom_line(aes(y = coeff_capital_exogene), col='red') + 
+      geom_ribbon(aes(ymin = coeff_capital_exogene_min90, ymax = coeff_capital_exogene_max90), alpha = 0.1) +
+      labs(title="nb_contributions",
+           x ="Année", y = "Coefficient régression")
+  plot1
 
+  plot(reg_coeffs$coeff_capital_endogene, reg_coeffs$coeff_capital_exogene)
+  abline(lm(reg_coeffs$coeff_capital_exogene ~ reg_coeffs$coeff_capital_endogene))
+  plot2 <- recordPlot()
+
+  return(list(plot1, summary_list, plot2))
+}
+
+
+var_endogene = c('nb_articles_cumule_coronavirus_lagged', 'nb_citations_cumule_coronavirus_lagged',
+                 'sommelog_citations_cumule_coronavirus_lagged', 
+                 'nb_coauteurs_cumule_coronavirus_lagged', 'premiere_annee_contribution_coronavirus')
+var_exogene = c('nb_articles_cumule_lagged', 'nb_citations_cumule_lagged',
+                'sommelog_citations_cumule_lagged', 'nb_coauteurs_cumule_lagged', 'premiere_annee_contribution')
+var_controle = c('Article_coronavirus_lagged', 'Article_lagged')
+var_dependante = 'nb_contribs_coronavirus'
+var_dependante = 'sommelog_citations_coronavirus'
+var_dependante = 'nb_citations_coronavirus'
+var_to_log = c()
+var_to_log = c('nb_coauteurs_cumule_coronavirus_lagged', 'nb_coauteurs_cumule_lagged')
+
+results = coeff_time_visualiser(dep = var_dependante, 
+                                endo = var_endogene, exo = var_exogene, ctrl = var_controle, 
+                                vtlog = var_to_log)
+coeff_plot = results[[1]]
+coeff_plot
+summaries = results[[2]]
+summaries[[2003]]
+relation_plot = results[[3]]
+replayPlot(relation_plot)
+
+
+# Cobb Douglas et coefficients fixes
+
+setwd(path_data)
+data_auteurs = read.csv("df_auteurs_variables2.csv")
+
+na_to_skip = c('premiere_annee_contribution_coronavirus', 'premiere_annee_contribution')
+
+coeff_time_visualiser_CD <- function(dep, endo, exo, ctrl, vtlog) {
+  
+  studied_cols = c(dep, endo, var_exogene, ctrl)
+  
+  for (col in studied_cols) {
+    if (!(col %in% na_to_skip)) {
+      data_auteurs[is.na(data_auteurs[,col]),col] = 0
+    }
+  }
+  
+  for (col in vtlog) {
+    data_auteurs[is.na(data_auteurs[,col]),col] = log(data_auteurs[is.na(data_auteurs[,col]),col] + 1)
+  }
+  
+  # On évalue l'évolution des coefficients au cours du temps
+  
+  reg_coeffs = data.frame(annee = as.numeric(0), 
+                          coeff = as.numeric(0), 
+                          coeff_min90 = as.numeric(0),
+                          coeff_max90 = as.numeric(0))
+  
+  summary_list = list()
+  for (annee in 1995:2022) {
+    
+    subset = data_auteurs[(data_auteurs$annee == annee) & (data_auteurs$premiere_annee_contribution_coronavirus <= annee),]
+    subset = subset[,studied_cols]
+    
+    # Première régression
+    reg = lm(as.formula(paste0(dep, ' ~ .')),
+             data = subset)
+    summary_coeffs = summary(reg)$coeff
+    
+    for (col in endo) {
+      subset[,col] = subset[,col]*summary_coeffs[col, 'Estimate']
+    }
+    for (col in exo) {
+      subset[,col] = subset[,col]*summary_coeffs[col, 'Estimate']
+    }
+    subset$capital_endogene = rowSums(subset[,endo])
+    subset$capital_exogene = rowSums(subset[,exo])
+    
+    subset$capital_endogene = (subset$capital_endogene - min(subset$capital_endogene)) / max(subset$capital_endogene - min(subset$capital_endogene))
+    subset$capital_exogene = (subset$capital_exogene - min(subset$capital_exogene)) / max(subset$capital_exogene - min(subset$capital_exogene))
+    subset$capital_endogene = log(subset$capital_endogene*100 + 1)
+    subset$capital_exogene = log(subset$capital_exogene*100 + 1)
+    
+    subset$new_dep = log(subset[,dep] + 1) - subset$capital_endogene
+    subset$new_expl = subset$capital_exogene - subset$capital_endogene
+    
+    # Seconde régression
+    reg = lm(new_dep ~ 0 + new_expl,
+             data = subset)
+    
+    summary_coeffs = summary(reg)$coeff
+    summary_list[[annee]] = summary(reg)
+    
+    coeff = summary_coeffs['new_expl', 'Estimate']
+    ecart_type = sqrt(sum(summary_coeffs['new_expl', 'Std. Error']**2))
+    coeff_min90 = coeff - 1.645*ecart_type
+    coeff_max90 = coeff + 1.645*ecart_type
+
+    new_row = c(annee,
+                coeff,
+                coeff_min90, coeff_max90)
+    
+    reg_coeffs = rbind(reg_coeffs, new_row)
+  }
+  reg_coeffs = reg_coeffs[-1,]
+  
+  plot = ggplot(reg_coeffs, aes(x = annee)) + 
+    geom_line(aes(y = coeff), col='blue') + 
+    geom_ribbon(aes(ymin = coeff_min90, ymax = coeff_max90), alpha = 0.1) +
+    labs(title="nb_contributions",
+         x ="Année", y = "Coefficient régression")
+  
   return(list(plot, summary_list))
 }
 
@@ -161,17 +301,20 @@ var_endogene = c('nb_articles_cumule_coronavirus_lagged', 'nb_citations_cumule_c
 var_exogene = c('nb_articles_cumule_lagged', 'nb_citations_cumule_lagged',
                 'sommelog_citations_cumule_lagged', 'nb_coauteurs_cumule_lagged', 'premiere_annee_contribution')
 var_controle = c('Article_coronavirus_lagged')
-var_dependante = 'nb_contribs'
 var_dependante = 'nb_contribs_coronavirus'
 var_dependante = 'sommelog_citations_coronavirus'
 var_dependante = 'nb_citations_coronavirus'
+var_to_log = c()
 var_to_log = c('nb_coauteurs_cumule_coronavirus_lagged', 'nb_coauteurs_cumule_lagged')
 
-results = coeff_time_visualiser(dep = var_dependante, 
+results = coeff_time_visualiser_CD(dep = var_dependante, 
                                    endo = var_endogene, exo = var_exogene, ctrl = var_controle, 
                                    vtlog = var_to_log)
 coeff_plot = results[[1]]
 coeff_plot
 summaries = results[[2]]
 summaries[[2022]]
-          
+
+
+
+

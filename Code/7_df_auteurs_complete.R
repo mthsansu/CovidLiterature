@@ -57,7 +57,7 @@ new_df = list()
 i = 0
 
 start.time <- Sys.time()
-for (annee in 2022:1990) {
+for (annee in 2022:min(articles$Year)) {
   
   subset_annee = articles[articles$Year == annee,]
   cores=detectCores()
@@ -186,7 +186,7 @@ for (annee in 2022:1990) {
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
-# 4 heures et des possuières
+# 55 min
 
 new_df = as.data.frame(new_df)
 colnames(new_df) = col_names
