@@ -8,6 +8,7 @@
 library(ggplot2)
 library(FactoMineR)
 library(factoextra)
+library(dplyr)
 
 
 setwd(path_data)
