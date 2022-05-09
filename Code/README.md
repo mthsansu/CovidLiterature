@@ -6,3 +6,5 @@ Le fichier ```Scraping Scopus.ipynb``` est le script (Python) qui permet de réa
 Pour l'utiliser, il faut spécifier les identifiant et mot de passe d'un compte utilisateur sur Scopus.
 
 Le fichier ```0_master.R``` permet de spécifier les chemins de l'utilisateur pour tous les traitements conduits sous le logiciel R.
+
+Le fichier ```2_generation_queries_corona.R``` génère automatiquement les requêtes à réaliser sous Scopus pour extraire nos données (à l'aide du script ```Scraping Scopus.ipynb```).
