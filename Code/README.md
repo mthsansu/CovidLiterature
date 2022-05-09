@@ -7,4 +7,6 @@ Pour l'utiliser, il faut spécifier les identifiant et mot de passe d'un compte 
 
 Le fichier ```0_master.R``` permet de spécifier les chemins de l'utilisateur pour tous les traitements conduits sous le logiciel R.
 
-Le fichier ```2_generation_queries_corona.R``` génère automatiquement les requêtes à réaliser sous Scopus pour extraire nos données (à l'aide du script ```Scraping Scopus.ipynb```).
+Le fichier ```2_generation_queries_corona.R``` génère automatiquement les requêtes à réaliser sous Scopus pour extraire nos données initiales, i.e. en suivant la méthodologie CORD-19 sur les journaux les plus importants en termes de contributions aux champ des coronavirus (à l'aide du script ```Scraping Scopus.ipynb```).
+
+
