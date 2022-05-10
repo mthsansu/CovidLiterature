@@ -13,6 +13,7 @@ library(FactoMineR)
 library(factoextra)
 library(dplyr)
 library(stringr)
+library(ggthemes)
 
 setwd(path_data)
 data_auteurs = read.csv("df_auteurs_variables2.csv")
@@ -142,10 +143,10 @@ coeff_time_visualiser <- function(dep, endo, exo, ctrl, vtlog, data) {
   reg_coeffs = data.frame(annee = as.numeric(0), 
                           coeff_capital_endogene = as.numeric(0), 
                           coeff_capital_exogene = as.numeric(0),
-                          coeff_capital_exogene_min90 = as.numeric(0),
-                          coeff_capital_exogene_max90 = as.numeric(0),
                           coeff_capital_endogene_min90 = as.numeric(0),
-                          coeff_capital_endogene_max90 = as.numeric(0))
+                          coeff_capital_endogene_max90 = as.numeric(0),
+                          coeff_capital_exogene_min90 = as.numeric(0),
+                          coeff_capital_exogene_max90 = as.numeric(0))
   
   summary_list = list()
   for (annee in 1995:2022) {
@@ -189,12 +190,15 @@ coeff_time_visualiser <- function(dep, endo, exo, ctrl, vtlog, data) {
   reg_coeffs = reg_coeffs[-1,]
   
   plot1 <- ggplot(reg_coeffs, aes(x = annee)) + 
-      geom_line(aes(y = coeff_capital_endogene), col='blue') + 
-      geom_ribbon(aes(ymin = coeff_capital_endogene_min90, ymax = coeff_capital_endogene_max90), alpha = 0.1) +
+      geom_line(aes(y = coeff_capital_endogene), col='darkblue') + 
+      geom_point(aes(y = coeff_capital_endogene), col='darkblue', alpha = 0.4) +
+      geom_ribbon(aes(ymin = coeff_capital_endogene_min90, ymax = coeff_capital_endogene_max90), alpha = 0.1, fill = "darkblue") +
       geom_line(aes(y = coeff_capital_exogene), col='red') + 
-      geom_ribbon(aes(ymin = coeff_capital_exogene_min90, ymax = coeff_capital_exogene_max90), alpha = 0.1) +
-      labs(title="nb_contributions",
-           x ="Année", y = "Coefficient régression")
+      geom_point(aes(y = coeff_capital_exogene), col='red', alpha = 0.4) + 
+      geom_ribbon(aes(ymin = coeff_capital_exogene_min90, ymax = coeff_capital_exogene_max90), alpha = 0.1, fill = "red") +
+      labs(title="",
+           x ="", y = "Coefficient") +
+    theme_hc()
   plot1
 
   plot(reg_coeffs$coeff_capital_endogene, reg_coeffs$coeff_capital_exogene)
