@@ -124,10 +124,11 @@ ggplot(data = data_plot[data_plot$annee < 2022,], aes(x=annee)) +
   geom_vline(xintercept = 2003, linetype = "dashed", color = "red") +
   geom_vline(xintercept = 2013, linetype = "dashed", color = "red") +
   geom_vline(xintercept = 2020, linetype = "dashed", color = "red") +
-  xlab("") + ylab("Nombre moyen de co-auteurs par auteur") +
+  xlab("") + ylab("Nombre moyen de co-auteurs") +
   theme_hc()
 
 
+# Nuage de points citations corona et citations hors corona
 
 data_plot <- data_auteurs[, c("author_id","nb_citations_cumule", "nb_citations_cumule_coronavirus","annee",
                               "derniere_annee_contribution", "nb_articles_cumule_coronavirus","nb_articles_cumule")]
@@ -139,13 +140,42 @@ data_plot$nb_citations_cumule <- data_plot$nb_citations_cumule + 1
 data_plot$nb_citations_cumule_coronavirus <- data_plot$nb_citations_cumule_coronavirus + 1
 
 ggplot(data = data_plot, aes(x=log(nb_citations_cumule))) +
-  geom_point(aes(y=log(nb_citations_cumule_coronavirus), color = derniere_annee_contribution, size = log(nb_articles_cumule_tot)),
-             alpha = 0.8) +
-  geom_smooth(aes(y=log(nb_citations_cumule_coronavirus)), method = "lm") +
+  geom_point(aes(y=log(nb_citations_cumule_coronavirus), colour = derniere_annee_contribution,
+                 size = log(nb_articles_cumule_tot)), alpha = 0.8) +
+  geom_smooth(aes(y=log(nb_citations_cumule_coronavirus)), method = "lm", color = "black", fill = "black", alpha = 0.15) +
   xlab("Citations cumulées hors coronavirus (log)") + ylab("Citations cumulées coronavirus (log)") +
   labs(color = "Dernière année de contribution", size = "Nombre d'articles cumulés (log)") +
   scale_color_viridis_c(option = "magma") +
   theme_hc()
+
+
+
+
+data_plot <- data_auteurs[, c("author_id","nb_citations_cumule", "nb_citations_cumule_coronavirus","annee",
+                              "derniere_annee_contribution", "nb_articles_cumule_coronavirus","nb_articles_cumule", "nb_articles_cumule_coronavirus",
+                              "nb_coauteurs_cumule","nb_coauteurs_cumule_coronavirus","nb_coauteurs_cumule_toutchamp")]
+data_plot <- data_plot[data_plot$annee == data_plot$derniere_annee_contribution,]
+data_plot$nb_articles_cumule_tot <- data_plot$nb_articles_cumule + data_plot$nb_articles_cumule_coronavirus
+# data_plot[is.na(data_plot$nb_citations_cumule) == TRUE, "nb_citations_cumule"] <- 0
+# data_plot[is.na(data_plot$nb_citations_cumule_coronavirus) == TRUE, "nb_citations_cumule_coronavirus"] <- 0
+data_plot$nb_citations_cumule <- data_plot$nb_citations_cumule + 1
+data_plot$nb_citations_cumule_coronavirus <- data_plot$nb_citations_cumule_coronavirus + 1
+data_plot$nb_coauteurs_cumule <- data_plot$nb_coauteurs_cumule + 1
+data_plot$nb_coauteurs_cumule_coronavirus <- data_plot$nb_coauteurs_cumule_coronavirus + 1
+ggplot(data = data_plot) +
+  geom_point(aes(x=log(nb_coauteurs_cumule),y=log(nb_citations_cumule),
+                 size = log(nb_articles_cumule)), color = "black", fill = "darkblue", alpha = 0.1, shape = 21) +
+  geom_point(aes(x=log(nb_coauteurs_cumule_coronavirus),y=log(nb_citations_cumule_coronavirus)
+                 , size = log(nb_articles_cumule_coronavirus)), color = "black", fill = "red", alpha = 0.15, shape = 21) +
+  geom_smooth(aes(x=log(nb_coauteurs_cumule_coronavirus),y=log(nb_citations_cumule_coronavirus)),
+              method = "lm", color = "red", fill = "red") +
+  geom_smooth(aes(x=log(nb_coauteurs_cumule),y=log(nb_citations_cumule)),
+              method = "lm", color = "darkblue", fill = "darkblue") +
+  xlab("Nombre de coauteurs (log)") + ylab("Citations cumulées (log)") +
+  labs(size = "Nombre d'articles cumulés (log)") +
+  theme_hc()
+
+
 
 
 
