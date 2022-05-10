@@ -104,9 +104,8 @@ ggplot(data = data_plot[data_plot$annee < 2022,], aes(x=annee)) +
 
 # Nombre de co-auteurs par auteur par année
 
-df <- data_auteurs[,c("nb_coauteurs_coronavirus","nb_coauteurs","annee")]
-df[is.na(df$nb_coauteurs_coronavirus) == TRUE,"nb_coauteurs_coronavirus"] <- 0
-df[is.na(df$nb_coauteurs) == TRUE,"nb_coauteurs"] <- 0
+df <- data_auteurs[data_auteurs$nb_coauteurs < 50 & data_auteurs$nb_coauteurs_coronavirus < 50,c("nb_coauteurs_coronavirus","nb_coauteurs","annee")]
+#df <- data_auteurs[,c("nb_coauteurs_coronavirus","nb_coauteurs","annee")]
 data_plot <- data.frame(annee = c(1990:2022), moy_cor = rep(NA,33), moy_non_cor = rep(NA,33), moy_tot = rep(NA,33))
 for (i in 1990:2022) {
   df_an <- df[df$annee == i,]
@@ -141,7 +140,7 @@ data_plot$nb_citations_cumule_coronavirus <- data_plot$nb_citations_cumule_coron
 
 ggplot(data = data_plot, aes(x=log(nb_citations_cumule))) +
   geom_point(aes(y=log(nb_citations_cumule_coronavirus), colour = derniere_annee_contribution,
-                 size = log(nb_articles_cumule_tot)), alpha = 0.8) +
+                 size = log(nb_articles_cumule_tot)), alpha = 0.2) +
   geom_smooth(aes(y=log(nb_citations_cumule_coronavirus)), method = "lm", color = "black", fill = "black", alpha = 0.15) +
   xlab("Citations cumulées hors coronavirus (log)") + ylab("Citations cumulées coronavirus (log)") +
   labs(color = "Dernière année de contribution", size = "Nombre d'articles cumulés (log)") +
@@ -155,9 +154,9 @@ data_plot <- data_auteurs[, c("author_id","nb_citations_cumule", "nb_citations_c
                               "derniere_annee_contribution", "nb_articles_cumule_coronavirus","nb_articles_cumule", "nb_articles_cumule_coronavirus",
                               "nb_coauteurs_cumule","nb_coauteurs_cumule_coronavirus","nb_coauteurs_cumule_toutchamp")]
 data_plot <- data_plot[data_plot$annee == data_plot$derniere_annee_contribution,]
+
 data_plot$nb_articles_cumule_tot <- data_plot$nb_articles_cumule + data_plot$nb_articles_cumule_coronavirus
-# data_plot[is.na(data_plot$nb_citations_cumule) == TRUE, "nb_citations_cumule"] <- 0
-# data_plot[is.na(data_plot$nb_citations_cumule_coronavirus) == TRUE, "nb_citations_cumule_coronavirus"] <- 0
+
 data_plot$nb_citations_cumule <- data_plot$nb_citations_cumule + 1
 data_plot$nb_citations_cumule_coronavirus <- data_plot$nb_citations_cumule_coronavirus + 1
 data_plot$nb_coauteurs_cumule <- data_plot$nb_coauteurs_cumule + 1
@@ -174,7 +173,6 @@ ggplot(data = data_plot) +
   xlab("Nombre de coauteurs (log)") + ylab("Citations cumulées (log)") +
   labs(size = "Nombre d'articles cumulés (log)") +
   theme_hc()
-
 
 
 
