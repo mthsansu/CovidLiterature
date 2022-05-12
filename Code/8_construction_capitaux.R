@@ -99,10 +99,10 @@ cores=detectCores()
 cl <- makeCluster(cores[1]-2) #not to overload your computer
 registerDoParallel(cl)
 start.time <- Sys.time()
-# new_df_auteurs <- foreach(auteur = unique(data_auteurs$author_id),
-#                           .combine = rbind,
-#                           .packages = 'dplyr') %dopar% {
-for (auteur in unique(data_auteurs$author_id[1:200])) {
+new_df_auteurs <- foreach(auteur = unique(data_auteurs$author_id),
+                          .combine = rbind,
+                          .packages = 'dplyr') %dopar% {
+# for (auteur in unique(data_auteurs$author_id[1:200])) {
 
   # Suppression
   subset = data_auteurs[data_auteurs$author_id == auteur,]
@@ -269,13 +269,13 @@ stopCluster(cl)
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
-# 36 minutes
+# 30 minutes
 
 new_df_auteurs = new_df_auteurs[!is.na(new_df_auteurs$author_id),]
 
 
-data_auteurs$premiere_annee_contribution[data_auteurs$premiere_annee_contribution == 0] = data_auteurs$premiere_annee_contribution_coronavirus[data_auteurs$premiere_annee_contribution == 0]
-data_auteurs$premiere_annee_contribution_lagged[!(is.na(data_auteurs$premiere_annee_contribution_lagged)) & (data_auteurs$premiere_annee_contribution_lagged == 0)] = data_auteurs$premiere_annee_contribution_coronavirus_lagged[!(is.na(data_auteurs$premiere_annee_contribution_lagged)) & (data_auteurs$premiere_annee_contribution_lagged == 0)]
+new_df_auteurs$premiere_annee_contribution[new_df_auteurs$premiere_annee_contribution == 0] = new_df_auteurs$premiere_annee_contribution_coronavirus[new_df_auteurs$premiere_annee_contribution == 0]
+new_df_auteurs$premiere_annee_contribution_lagged[!(is.na(new_df_auteurs$premiere_annee_contribution_lagged)) & (new_df_auteurs$premiere_annee_contribution_lagged == 0)] = new_df_auteurs$premiere_annee_contribution_coronavirus_lagged[!(is.na(new_df_auteurs$premiere_annee_contribution_lagged)) & (new_df_auteurs$premiere_annee_contribution_lagged == 0)]
 
 setwd(path_data)
 write.csv(new_df_auteurs, "df_auteurs_variables2_avec_journaux.csv")

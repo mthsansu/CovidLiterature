@@ -164,8 +164,7 @@ new_df = list()
 i = 0
 
 start.time <- Sys.time()
-for (annee in 1998:1999) {
-#for (annee in 2022:min(articles$Year)) {
+for (annee in 2022:min(articles$Year)) {
 
   subset_annee = articles[articles$Year == annee,]
   cores=detectCores()
@@ -196,9 +195,9 @@ for (annee in 1998:1999) {
         list_jour_nb_citations = c()
         list_journaux_score_journal = c()
         for (index in journaux_df$index) {
-          jour_nb_articles = sum(subset_base$index == index)
+          jour_nb_articles = sum(subset_base$Source.title == paste0('journal_', index))
           list_jour_nb_articles = c(list_jour_nb_articles, jour_nb_articles)
-          jour_nb_citations = sum(subset_base$Cited.by[subset_base$index == index])
+          jour_nb_citations = sum(subset_base$Cited.by[subset_base$Source.title == paste0('journal_', index)])
           list_jour_nb_citations = c(list_jour_nb_citations, jour_nb_citations)
           jour_score_journal = journaux_df$moyenne_citations[journaux_df$index == index]
           list_journaux_score_journal = c(list_journaux_score_journal, jour_score_journal)
@@ -249,12 +248,12 @@ for (annee in 1998:1999) {
         list_jour_nb_articles = c()
         list_jour_nb_citations = c()
         list_journaux_score_journal = c()
-        for (journal in list_journaux) {
-          jour_nb_articles = sum(subset_base$Source.title == journal)
+        for (index in journaux_df$index) {
+          jour_nb_articles = sum(subset_base$Source.title == paste0('journal_', index))
           list_jour_nb_articles = c(list_jour_nb_articles, jour_nb_articles)
-          jour_nb_citations = sum(subset_base$Cited.by[subset_base$Source.title == journal])
+          jour_nb_citations = sum(subset_base$Cited.by[subset_base$Source.title == paste0('journal_', index)])
           list_jour_nb_citations = c(list_jour_nb_citations, jour_nb_citations)
-          jour_score_journal = journaux_df$moyenne_citations[journaux_df$Source.title == journal]
+          jour_score_journal = journaux_df$moyenne_citations[journaux_df$index == index]
           list_journaux_score_journal = c(list_journaux_score_journal, jour_score_journal)
         }
         new_row = c(new_row, list_jour_nb_articles, list_jour_nb_citations, list_journaux_score_journal)
@@ -307,7 +306,7 @@ for (annee in 1998:1999) {
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
-# 1.36h
+# 1.1h
 
 new_df = as.data.frame(new_df)
 colnames(new_df) = col_names
