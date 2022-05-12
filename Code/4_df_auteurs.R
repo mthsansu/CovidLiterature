@@ -104,6 +104,11 @@ setwd(path_data)
 write.csv(df_auteurs, "df_auteurs_variables.csv")
 
 
+
+
+setwd(path_data)
+df_auteurs = read.csv("df_auteurs_variables.csv")
+
 # Stratification
 
 data_for_stratification = df_auteurs[,c('X', 'Id_auteur')]
@@ -152,6 +157,9 @@ sampled_data = df_auteurs[df_auteurs$Id_auteur %in% data_for_stratification$Id_a
 
 setwd(path_data)
 write.csv(sampled_data, "df_auteurs_sampled.csv")
+
+setwd(path_data)
+sampled_data = read.csv("df_auteurs_sampled.csv")
 
 hist(df_auteurs$premiere_annee_contribution)
 hist(sampled_data$premiere_annee_contribution)
